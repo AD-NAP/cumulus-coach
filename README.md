@@ -1,6 +1,6 @@
-# rag-agent-service
+# cumulus-coach
 
-An AWS Cloud Practitioner study agent. Ask it a question and it answers from public AWS documentation, with
+An agentic AWS study coach. Ask it a question and it answers from public AWS documentation, with
 citations. It can also quiz you on a topic and look up an AWS service by name.
 
 Built to learn and show the pieces of an LLM application: retrieval (RAG), tool calling, structured outputs,
