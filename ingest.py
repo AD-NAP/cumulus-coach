@@ -24,7 +24,7 @@ def fetch_text(url):
     soup = BeautifulSoup(html, "html.parser")
     div = soup.find(id = id)               # first element with that id, or None
     if div == None:
-        raise(LookupError(id + " is not found in " + url))
+        raise ValueError(id + " is not found in " + url)
     text = div.get_text(separator=" ")          # all text inside, tags removed
 
     clean_text = " ".join(text.split())
