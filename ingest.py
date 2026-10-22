@@ -1,4 +1,5 @@
 import requests
+import chromadb
 from bs4 import BeautifulSoup
 
 URLS = [
@@ -19,8 +20,11 @@ def fetch_text(url):
     resp.raise_for_status()                     # turn a 404/500 into an error instead of silently going on
     html = resp.content
 
+    id = "main-col-body"
     soup = BeautifulSoup(html, "html.parser")
-    div = soup.find(id="main-col-body")               # first element with that id, or None
+    div = soup.find(id = id)               # first element with that id, or None
+    if div == None:
+        raise(LookupError(id + " is not found in " + url))
     text = div.get_text(separator=" ")          # all text inside, tags removed
 
     clean_text = " ".join(text.split())
@@ -37,12 +41,33 @@ def chunk_words(text, size=500, overlap=50):
             break 
     return chunk_list
 
-result = []
-# for url in URLS:
-#     result.append(fetch_text(url))
+def store_chunk(chunks, url, col):
+    
+    id_list = []
+    source_list = []
+    for i, _ in enumerate(chunks):
+        id_list.append(url + "_" + str(i))
+        source_list.append({"source": url})
 
-# for text in result:
-#     print(len(text.split()), 'words')
-#     print(text[:200])
+    # Alternative 1 liner - do the same for source_list
+    # id_list = [url + "_" + str(i) for i, _ in enumerate(chunks)]
 
-print(chunk_words("w0 w1 w2 w3 w4 w5 w6 w7 w8 w9", size=4, overlap=1))
+    col.upsert(
+        ids=id_list,
+        documents=chunks,
+        metadatas=source_list
+    )
+
+if __name__ == "__main__":
+    client = chromadb.PersistentClient(path="./data")
+    col = client.get_or_create_collection(name="aws_docs")
+
+    total_chunks = 0
+    for url in URLS:
+        clean_text = fetch_text(url)
+        chunk_list = chunk_words(clean_text)
+        total_chunks += len(chunk_list)
+        store_chunk(chunk_list, url, col)
+
+    print(col.count())
+    print(total_chunks)
