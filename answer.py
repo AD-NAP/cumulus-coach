@@ -43,7 +43,8 @@ if __name__ == "__main__":
     questions = ["What is the shared responsibility model?",
                "What are the six advantages of cloud computing?",
                "What is a good pasta recipe?",
-               "Tell me more about AWS Glacier and a good chicken rice recipe"]
+               "Tell me more about AWS Glacier and a good chicken rice recipe",
+               "Is AWS better than Google Cloud?"]
 
     for qn in questions:
         print(answer(qn))
