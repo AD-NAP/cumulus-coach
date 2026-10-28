@@ -1,10 +1,19 @@
 import chromadb
 
-client = chromadb.PersistentClient("./data")
-col = client.get_collection(name="aws_docs")
+_col = None  # opened on the first retrieve() call, not at import
 
-def retrieve(query, k=3): 
-    answer = col.query(query_texts=query, n_results=k)
+
+def get_col():
+    """Open the aws_docs collection once and reuse it. Fails loudly if ingest.py hasn't been run."""
+    global _col
+    if _col is None:
+        client = chromadb.PersistentClient("./data")
+        _col = client.get_collection(name="aws_docs")
+    return _col
+
+
+def retrieve(query, k=3):
+    answer = get_col().query(query_texts=query, n_results=k)
     result = []
     for text, metadata , distance in zip(answer["documents"][0], answer["metadatas"][0], answer["distances"][0]):
         result.append({"text": text, "source": metadata.get("source"), "distance": distance})
