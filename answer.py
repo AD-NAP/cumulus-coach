@@ -13,6 +13,7 @@ class Answer:
 
 
 client = anthropic.Anthropic()
+MODEL = "claude-haiku-5-5"  # one place to change the model for every agent
 MAX_DISTANCE = 1.1  # best chunk further than this: refuse without calling the API
 REFUSAL = "I don't know based on the provided AWS documents."
 SYSTEM = f"""You are an AWS study coach.
@@ -21,12 +22,15 @@ Grounding: answer only from the excerpts, not general knowledge.
 Refusal: if the excerpts don't contain the answer, only reply "{REFUSAL}"
 Citations: put the excerpt number, such as [2], after each claim so users can trust your answers."""
 
-def build_prompt(question, notes):
+def format_notes(notes, start=1):
+    """Number the excerpts [start], [start+1], ... with their sources, so Claude can cite them."""
     parts = []
-    for i, note in enumerate(notes, start=1):
+    for i, note in enumerate(notes, start=start):
         parts.append(f"[{i}] (source: {note['source']})\n{note['text']}")
-    context = "\n\n".join(parts)
-    return f"""{context}
+    return "\n\n".join(parts)
+
+def build_prompt(question, notes):
+    return f"""{format_notes(notes)}
 
 Question: {question}"""
 
@@ -52,7 +56,7 @@ def answer(question):
     rag_prompt = build_prompt(question, notes)
 
     response = client.messages.create(
-                model="claude-haiku-5-5",
+                model=MODEL,
                 system=SYSTEM,
                 max_tokens=1024,
                 messages=[{"role": "user", "content": rag_prompt}],

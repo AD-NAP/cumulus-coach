@@ -30,3 +30,7 @@ LOOKUP_SERVICE_TOOL = {
         "required": ["name"],
     },
 }
+
+# The menu Claude sees, and the kitchen that cooks each order: tool name -> Python function.
+TOOL_DEFINITIONS = [LOOKUP_SERVICE_TOOL]
+TOOLS = {"lookup_service": lookup_service}
