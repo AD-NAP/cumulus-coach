@@ -70,7 +70,7 @@ python -m pytest                   # no API key needed
 | `tools.py` | `lookup_service(name)`: exact-name search, plus the tool definition Claude sees |
 | `agent.py` | The `Agent` interface, `RagAgent` and `ToolAgent` |
 
-More detail in [Architecture](docs/architecture.md) and the [decision records](docs/decisions/).
+More detail in [Architecture](docs/ARCHITECTURE.md) and the [decision records](docs/ADR.md).
 
 ## Stack
 

@@ -1,7 +1,7 @@
 # cumulus-coach
 
 An agentic AWS study coach: RAG over public AWS docs, tool calling, structured outputs and evals.
-See `README.md` and `docs/architecture.md`.
+See `README.md` and `docs/ARCHITECTURE.md`.
 
 ## How to work with me here: guide mode
 
